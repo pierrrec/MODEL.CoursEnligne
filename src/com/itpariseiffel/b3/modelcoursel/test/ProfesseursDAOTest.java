@@ -3,7 +3,6 @@ package com.itpariseiffel.b3.modelcoursel.test;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
-
 import org.junit.Test;
 
 import com.itpariseiffel.b3.modelcoursel.beans.Professeurs;
@@ -19,8 +18,9 @@ public class ProfesseursDAOTest {
 	}
 
 	@Test
-	public void testGetProfesseursAll() {
-		fail("Not yet implemented");
+	public void testGetProfesseursAll() throws SQLException {
+		ProfesseursDAO professeursDAOTest = new ProfesseursDAO();
+		professeursDAOTest.getProfesseursAll();
 	}
 
 	@Test
@@ -32,13 +32,15 @@ public class ProfesseursDAOTest {
 		}
 
 	@Test
-	public void testUpdateProfesseur() {
-		fail("Not yet implemented");
+	public void testUpdateProfesseur() throws SQLException {
+		
 	}
 
 	@Test
-	public void testDeleteProfesseur() {
-		fail("Not yet implemented");
+	public void testDeleteProfesseur() throws SQLException {
+		ProfesseursDAO  professeursDAOTest = new ProfesseursDAO();
+		Professeurs professeursTest = professeursDAOTest.deleteProfesseur(1);
+		assertEquals(1,professeursTest.getNum_prof());
 	}
 
 }

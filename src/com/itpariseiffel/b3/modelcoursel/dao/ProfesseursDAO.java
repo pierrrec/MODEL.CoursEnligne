@@ -164,20 +164,29 @@ public class ProfesseursDAO {
 	 * 
 	 * @param ProfesseurId
 	 *            The identifying number of the Professeur to delete
+	 * @return 
 	 * @throws SQLException
 	 *             SQL Exception in case it didn't work properly
 	 */
-	public void deleteProfesseur(int ProfesseurId) throws SQLException {
+	public Professeurs deleteProfesseur(int ProfesseurId) throws SQLException {
 		String query = SQLQueries.DELETE_PROFESSEURS_QUERY + ProfesseurId;
+		ResultSet rs = null;
+		Professeurs professeur = null;
 		try {
 			connection = Connector.getConnection();
 			statement = connection.createStatement();
-			statement.executeUpdate(query);
-			System.out.println("Professeur supprimé.");
+			rs = statement.executeQuery(query);
+			if (rs.next()) {
+				professeur = new Professeurs();
+				professeur.setNum_prof(rs.getInt("num_prof"));
+			}
 		} finally {
 			if (statement != null)
 				statement.close();
+			if (rs != null)
+				rs.close();
 			connection.close();
 		}
+		return professeur;
 	}
 }

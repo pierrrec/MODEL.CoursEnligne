@@ -101,10 +101,12 @@ public class CoursDAO {
 	 * 
 	 * @param cours
 	 *            The cours to add to the database
+	 * @return 
 	 * @throws SQLException
 	 *             SQL Exception in case it didn't work properly
 	 */
-	public void insertCours(Cours cours) throws SQLException {
+	public int insertCours(Cours cours) throws SQLException {
+		int nbrInsert = 0;
 		PreparedStatement req = null;
 		String query = SQLQueries.INSERT_COURS_QUERY;
 		try {
@@ -115,13 +117,15 @@ public class CoursDAO {
 			req.setString(3, cours.getTitre_cours());
 			req.setInt(4, cours.getNumero_document());
 			req.setInt(5, cours.getCode_filiere());
-			statement.executeUpdate(query);
+			nbrInsert = statement.executeUpdate(query);
 			System.out.println("Cours ajouté.");
 		} finally {
 			if (req != null)
 				req.close();
 			connection.close();
+			nbrInsert = 0;
 		}
+		return nbrInsert;
 	}
 
 	/**
@@ -156,20 +160,30 @@ public class CoursDAO {
 	 * 
 	 * @param coursId
 	 *            The identifying number of the cours to delete
+	 * @return 
 	 * @throws SQLException
 	 *             SQL Exception in case it didn't work properly
 	 */
-	public void deleteCours(int coursId) throws SQLException {
+	public Cours deleteCours(int coursId) throws SQLException {
 		String query = SQLQueries.DELETE_COURS_QUERY + coursId;
+		ResultSet rs = null;
+		Cours cours = null;
 		try {
 			connection = Connector.getConnection();
 			statement = connection.createStatement();
-			statement.executeUpdate(query);
-			System.out.println("Cours supprimé.");
+			rs = statement.executeQuery(query);
+			if (rs.next()) {
+				cours = new Cours();
+				cours.setCode_cours(rs.getInt("code_cours"));
+				System.out.println("Cours supprimé.");
+			}
 		} finally {
 			if (statement != null)
 				statement.close();
+			if (rs != null)
+				rs.close();
 			connection.close();
 		}
+		return cours;
 	}
 }

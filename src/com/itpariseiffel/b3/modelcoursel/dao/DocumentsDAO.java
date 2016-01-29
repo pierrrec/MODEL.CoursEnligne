@@ -95,10 +95,12 @@ public class DocumentsDAO {
 	 * 
 	 * @param document
 	 *            The document to add to the database
+	 * @return 
 	 * @throws SQLException
 	 *             SQL Exception in case it didn't work properly
 	 */
-	public void insertDocuments(Documents documents) throws SQLException {
+	public int insertDocuments(Documents documents) throws SQLException {
+		int nbrInsert = 0;
 		PreparedStatement req = null;
 		String query = SQLQueries.INSERT_DOCUMENTS_QUERY;
 		try {
@@ -106,13 +108,15 @@ public class DocumentsDAO {
 			req = connection.prepareStatement(query);
 			req.setInt(1, documents.getNumero_document());
 			req.setString(2, documents.getTitre_document());
-			statement.executeUpdate(query);
+			nbrInsert = statement.executeUpdate(query);
 			System.out.println("Document ajouté.");
 		} finally {
 			if (req != null)
 				req.close();
 			connection.close();
+			nbrInsert = 0;
 		}
+		return nbrInsert;
 	}
 
 	/**
@@ -148,18 +152,27 @@ public class DocumentsDAO {
 	 * @throws SQLException
 	 *             SQL Exception in case it didn't work properly
 	 */
-	public void deleteCours(int documentId) throws SQLException {
+	public Documents deleteDocuments(int documentId) throws SQLException {
 		String query = SQLQueries.DELETE_DOCUMENTS_QUERY + documentId;
+		ResultSet rs = null;
+		Documents documents = null;
 		try {
 			connection = Connector.getConnection();
 			statement = connection.createStatement();
-			statement.executeUpdate(query);
-			System.out.println("document supprimé.");
+			rs = statement.executeUpdate(query);
+			if (rs.next()) {
+				documents = new Documents();
+				documents.setNumero_document(rs.getInt("numero_document"));
+				System.out.println("document supprimé.");
+			}
 		} finally {
 			if (statement != null)
 				statement.close();
+			if (rs != null)
+				rs.close();
 			connection.close();
 		}
+		return documents;
 	}
 	
 	

@@ -95,10 +95,12 @@ public class FilieresDAO {
 	 * 
 	 * @param filiere_new
 	 *            The filiere to add to the database
+	 * @return 
 	 * @throws SQLException
 	 *             SQL Exception in case it didn't work properly
 	 */
-	public void insertFiliere(Filieres filiere_new) throws SQLException {
+	public int insertFiliere(Filieres filiere_new) throws SQLException {
+		int nbrInsert = 0;
 		PreparedStatement req = null;
 		String query = SQLQueries.INSERT_FILIERES_QUERY;
 		try {
@@ -106,13 +108,15 @@ public class FilieresDAO {
 			req = connection.prepareStatement(query);
 			req.setInt(1, filiere_new.getCode_filiere());
 			req.setString(2, filiere_new.getNom_filiere());
-			statement.executeUpdate(query);
+			nbrInsert = statement.executeUpdate(query);
 			System.out.println("Filière ajoutée.");
 		} finally {
 			if (req != null)
 				req.close();
 			connection.close();
+			nbrInsert = 0;
 		}
+		return nbrInsert;
 	}
 
 	/**
@@ -144,20 +148,27 @@ public class FilieresDAO {
 	 * 
 	 * @param FiliereId
 	 *            The identifying number of the Filiere to delete
+	 * @return 
 	 * @throws SQLException
 	 *             SQL Exception in case it didn't work properly
 	 */
-	public void deleteFiliere(int filiereId) throws SQLException {
+	public Filieres deleteFiliere(int filiereId) throws SQLException {
 		String query = SQLQueries.DELETE_FILIERES_QUERY + filiereId;
+		ResultSet rs = null;
+		Filieres filieres = null;
 		try {
 			connection = Connector.getConnection();
 			statement = connection.createStatement();
-			statement.executeUpdate(query);
+			rs = statement.executeUpdate(query);
 			System.out.println("Filière supprimée.");
 		} finally {
 			if (statement != null)
 				statement.close();
+			if (rs != null)
+				rs.close();
 			connection.close();
 		}
+		return filieres;
 	}
+	
 }
